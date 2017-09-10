@@ -11,7 +11,7 @@ exports.run = async (client, msg) => {
   const href = root.querySelector(".panel-content p.block a");
   const card = root.querySelector(".panel-content div.votes span.vote div");
   const signature = root.querySelector(".panel div.text-center");
-  const link = "http://www.fmylife.com" + href.rawAttrs.replace(/^href=|"/g, ""); // eslint-disable-line prefer-template
+  const link = `http://www.fmylife.com${href.rawAttrs.replace(/^href=|"/g, "")}`;
   const cardId = card.rawAttrs.replace(/\D/g, "");
   let signatureDisplay = "Author and date of this fml unkown";
   if (signature.childNodes.length === 1) {
