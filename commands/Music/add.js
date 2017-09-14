@@ -6,7 +6,7 @@ const yt = require("ytdl-core");
 const getInfoAsync = require("util").promisify(yt.getInfo);
 const snekfetch = require("snekfetch");
 
-const { GOOGLE_SEARCH } = "";
+const { GOOGLE_SEARCH } = require("../../config.json");
 const YouTubeRegExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/\S*(?:(?:\/e(?:mbed)?)?\/|watch\/?\?(?:\S*?&?v=))|youtu\.be\/)([\w-]{11})(?:[^\w-]|$)/;
 const fetchURL = url => snekfetch.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${url}&key=${GOOGLE_SEARCH}`)
   .then(result => result.body);
