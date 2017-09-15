@@ -1,5 +1,6 @@
 const { Client, PermLevels } = require("komada");
 const config = require("./config.json");
+const Enmap = require("enmap");
 
 const permStructure = new PermLevels()
   .addLevel(0, false, () => true)
@@ -18,11 +19,21 @@ const permStructure = new PermLevels()
   .addLevel(9, true, (client, msg) => msg.author.id === client.config.ownerID)
   .addLevel(10, false, (client, msg) => msg.author.id === client.config.ownerID);
 
-const client = new Client({
+class Apex extends Client {
+
+  constructor(options) {
+    super(options);
+    this.points = new Enmap({ name: "points", persistent: true });
+  }
+
+}
+
+const client = new Apex({
   ownerID: "257847417183928320",
   prefix: "-",
   permStructure,
   cmdEditing: true,
+  cmdLogging: true,
   clientOptions: {
     fetchAllMembers: false,
   },
