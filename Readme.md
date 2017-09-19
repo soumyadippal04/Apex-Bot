@@ -1,3 +1,5 @@
+<a href="https://discord.gg/tc7Prth" target="_blank"><img src="https://discordapp.com/api/guilds/321189332645838849/embed.png"></a>
+
 # Apex Bot
 
 ## What is it? 
