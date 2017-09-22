@@ -1,7 +1,4 @@
-const AuthDetails = {
-  imgflip_username: "xSoumil",
-  imgflip_password: "pasiphae07",
-};
+const { memeUsername, memePassword } = require("../../config.json")
 
 const meme = {
   brace: 61546,
