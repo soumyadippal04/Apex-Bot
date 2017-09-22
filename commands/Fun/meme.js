@@ -21,7 +21,7 @@ exports.run = (client, msg, args) => { // eslint-disable-line no-unused-vars
   const tags = msg.content.split("\"");
   const memetype = tags[0].split(" ")[1];
   const Imgflipper = require("imgflipper");
-  const imgflipper = new Imgflipper(AuthDetails.imgflip_username, AuthDetails.imgflip_password);
+  const imgflipper = new Imgflipper(memeUsername, memePassword);
   imgflipper.generateMeme(meme[memetype], tags[1] ? tags[1] : "", tags[3] ? tags[3] : "", (err, image) => {
     msg.channel.send(image);
   });
