@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/34788285c17e4b3d859a053df0eabd98)](https://www.codacy.com/app/Soumil07/Apex-Bot?utm_source=github.com&utm_medium=referral&utm_content=Soumil07/Apex-Bot&utm_campaign=badger)
 [![Discord](https://discordapp.com/api/guilds/321189332645838849/embed.png)](https://discord.gg/tc7Prth)
 # Apex Bot
 
