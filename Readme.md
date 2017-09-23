@@ -1,5 +1,4 @@
-<a href="https://discord.gg/tc7Prth" target="_blank"><img src="https://discordapp.com/api/guilds/321189332645838849/embed.png"></a>
-
+[![Discord](https://discordapp.com/api/guilds/321189332645838849/embed.png)](https://discord.gg/tc7Prth)
 # Apex Bot
 
 ## What is it? 
