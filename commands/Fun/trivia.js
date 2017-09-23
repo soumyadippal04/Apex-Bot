@@ -188,7 +188,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
 	collector.on('collect', answer => {
 		if (answer.content.toLowerCase() === correct_answer.toLowerCase() && !participants.includes(answer.author.id)) {
 			gameStatus.delete(msg.channel.id); // Closes the game
-			winner = msg.author;
+			winner = answer.author;
 			collector.stop(); // Closes the collector 
 		} else if (!participants.includes(answer.author.id)) {
 			participants.push(answer.author.id);
