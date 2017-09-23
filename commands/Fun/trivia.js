@@ -2,7 +2,7 @@ const request = require("snekfetch");
 const Entities = require('html-entities').AllHtmlEntities; // Used to decode the HTML encoding of the trivia API
 const entities = new Entities();
 
-var gameStatus = new Set();
+const gameStatus = new Set();
 
 exports.run = async (client, msg, [category, type, duration]) => {
 	var reply; 
@@ -10,7 +10,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
 	
 	// Check Game Status
 	if (gameStatus.has(msg.channel.id)) {
-		return await reply.edit(`\`\`\`A game of trivia is already going on in this channel. Please wait until it's over before starting a new one.\`\`\``);
+		return reply.edit(`\`\`\`A game of trivia is already going on in this channel. Please wait until it's over before starting a new one.\`\`\``);
 	} else {
 		gameStatus.add(msg.channel.id);
 	}
@@ -18,7 +18,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
 	// Duration
 	if (duration) {
 		if (duration < 30 || duration > 60) {
-			return await reply.edit(`\`\`\`The duration cannot be \`${duration}\`. It must be in between 30 and 60.\nPlease try again.\`\`\``);
+			return reply.edit(`\`\`\`The duration cannot be \`${duration}\`. It must be in between 30 and 60.\nPlease try again.\`\`\``);
 		} else {
 			var time = duration * 1000;
 		}
@@ -135,7 +135,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
   var url = `https://opentdb.com/api.php?amount=1${categoryReq}${typeReq}`;
   console.log(url);
   var req = await request.get(url).then(data => JSON.parse(data.text));
-  if(!req || !req.results || req.results.length == 0){
+  if(!req || !req.results || req.results.length === 0){
     console.log(req);
     reply.edit("```Error:\n" + JSON.stringify(req) + "```");
     gameStatus.delete(msg.channel.id);
@@ -168,7 +168,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
   }
 
   /* Result */
-  const embed = await new client.methods.Embed()
+  const embed = new client.methods.Embed()
     .setAuthor("Trivia")
     .setTitle(category)
     .setColor(0xf37917)
@@ -186,7 +186,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
 	  { time: time }
 	);
 	collector.on('collect', answer => {
-		if (answer.content.toLowerCase() == correct_answer.toLowerCase() && !participants.includes(answer.author.id)) {
+		if (answer.content.toLowerCase() === correct_answer.toLowerCase() && !participants.includes(answer.author.id)) {
 			gameStatus.delete(msg.channel.id); // Closes the game
 			winner = msg.author;
 			collector.stop(); // Closes the collector 
@@ -216,7 +216,7 @@ exports.run = async (client, msg, [category, type, duration]) => {
 exports.conf = {
   enabled: true,
   runIn: ["text"],
-  aliases: ["quizz"],
+  aliases: ["quiz"],
   permLevel: 0,
   botPerms: [],
   requiredFuncs: ["shuffleArray"],
