@@ -29,7 +29,7 @@ exports.run = async (client, msg, [type, duration]) => {
   let categoryId;
   if (type === "film") {
     categoryId = 11;
-  } else if (type == "tv") {
+  } else if (type === "tv") {
     categoryId = 14;
   } else {
     categoryId = [11, 14][Math.floor(Math.random() * 2)];
@@ -120,7 +120,7 @@ exports.run = async (client, msg, [type, duration]) => {
     for (let i = participants.length; i > 0; i--) {
       participants.pop();
     }
-    gameStatus.delete(msg.channel.id); // Closes the game
+   return gameStatus.delete(msg.channel.id); // Closes the game
   });
 };
 
