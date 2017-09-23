@@ -1,60 +1,145 @@
 const request = require("snekfetch");
-const Entities = require("html-entities").AllHtmlEntities;
-// Used to decode the HTML encoding of the trivia API
+const Entities = require('html-entities').AllHtmlEntities; // Used to decode the HTML encoding of the trivia API
 const entities = new Entities();
 
 const gameStatus = new Set();
 
-exports.run = async (client, msg, [type, duration]) => {
-  const reply = await msg.channel.send("```Searching for a random trivia (this can take a few seconds)```");
+exports.run = async (client, msg, [category, type, duration]) => {
+	var reply; 
+  reply = await msg.channel.send(`\`\`\`Searching for a random trivia (this can take a few seconds)\`\`\``);
+	
+	// Check Game Status
+	if (gameStatus.has(msg.channel.id)) {
+		return reply.edit(`\`\`\`A game of trivia is already going on in this channel. Please wait until it's over before starting a new one.\`\`\``);
+	} else {
+		gameStatus.add(msg.channel.id);
+	}
 
-  // Check Game Status
-  if (gameStatus.has(msg.channel.id)) {
-    return reply.edit("```A game of trivia is already going on in this channel. Please wait until it's over before starting a new one.```");
-  }
-  gameStatus.add(msg.channel.id);
+	// Duration
+	if (duration) {
+		if (duration < 30 || duration > 60) {
+			return reply.edit(`\`\`\`The duration cannot be \`${duration}\`. It must be in between 30 and 60.\nPlease try again.\`\`\``);
+		} else {
+			var time = duration * 1000;
+		}
+	} else {
+		var time = 30000;
+	}
 
+	// category
+	let categoryReq = "&category=";
+	if (category != null) {
+		switch (category.toLowerCase()) {
+	    case "general":
+	      categoryReq += 9;
+	      break; 
+	    case "books":
+	      categoryReq += 10;
+	      break; 
+	    case "film":
+	      categoryReq += 11;
+	      break; 
+	    case "music":
+	      categoryReq += 12;
+	      break; 
+	    case "theatres":
+	      categoryReq += 13;
+	      break; 
+	    case "tv":
+	      categoryReq += 14;
+	      break; 
+	    case "videogames":
+	      categoryReq += 15;
+	      break; 
+	    case "boardgames":
+	      categoryReq += 16;
+	      break; 
+	    case "nature":
+	      categoryReq += 17;
+	      break; 
+	    case "computers":
+	      categoryReq += 18;
+	      break; 
+	    case "maths":
+	      categoryReq += 19;
+	      break; 
+	    case "mythology":
+	      categoryReq += 20;
+	      break; 
+	    case "sports":
+	      categoryReq += 21;
+	      break; 
+	    case "geography":
+	      categoryReq += 22;
+	      break; 
+	    case "history":
+	      categoryReq += 23;
+	      break; 
+	    case "politics":
+	      categoryReq += 24;
+	      break; 
+	    case "art":
+	      categoryReq += 25;
+	      break; 
+	    case "celebrities":
+	      categoryReq += 26;
+	      break; 
+	    case "animals":
+	      categoryReq += 27;
+	      break; 
+	    case "vehicles":
+	      categoryReq += 28;
+	      break; 
+	    case "comics":
+	      categoryReq += 29;
+	      break; 
+	    case "gadgets":
+	      categoryReq += 30;
+	      break; 
+	    case "manga":
+	      categoryReq += 31;
+	      break; 
+	    case "cartoon":
+	      categoryReq += 32;
+	      break; 
+	    default: 
+	      categoryReq = "";
+		}
+	} else {
+		categoryReq = "";
+	}
 
-  // Duration
-  if (duration) {
-    if (duration < 30 || duration > 60) {
-      return reply.edit(`\`\`\`The duration cannot be \`${duration}\`. It must be in between 30 and 60.\nPlease try again.\`\`\``);
-    }
-    const time = duration * 1000;
-  } else {
-    const time = 30000;
-  }
+	// Type (boolean or multiple)
+	let typeReq = "&type="
+	if (type != null) {
+		switch (type.toLowerCase()) {
+	    case "boolean":
+	      typeReq += type.toLowerCase();
+	      break; 
+	    case "multiple":
+	      typeReq += type.toLowerCase();
+	      break; 
+	    default: 
+	      typeReq = "";
+	  }
+	} else {
+		typeReq = "";
+	}
 
-  // Type
-  let categoryId;
-  if (type === "film") {
-    categoryId = 11;
-  } else if (type === "tv") {
-    categoryId = 14;
-  } else {
-    categoryId = [11, 14][Math.floor(Math.random() * 2)];
-  }
-
-  /* Trivia */
+	/* Trivia */
   // Variables
-  /* eslint-disable camelcase */
-  let category;
-  let difficulty;
-  let question;
-  let question_type;
-  let question_display;
-  let correct_answer;
-  let incorrect_answers = [];
-  let possible_answers = [];
-  let displayed_answers = "";
+  var category, difficulty, question, question_type, question_display, correct_answer;
+  var incorrect_answers = [], possible_answers = [];
+  var displayed_answers = "";
   // Request
-  const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}`;
-  const req = await request.get(url).then(data => JSON.parse(data.text));
-  if (!req || !req.results || req.results.length === 0) {
+  var url = `https://opentdb.com/api.php?amount=1${categoryReq}${typeReq}`;
+  console.log(url);
+  var req = await request.get(url).then(data => JSON.parse(data.text));
+  if(!req || !req.results || req.results.length === 0){
     console.log(req);
-    reply.edit(`\`\`\`Error:\n${JSON.stringify(req)}\`\`\``);
+    reply.edit("```Error:\n" + JSON.stringify(req) + "```");
     gameStatus.delete(msg.channel.id);
-    return null;
+    return;
   }
   category = req.results[0].category;
   correct_answer = req.results[0].correct_answer;
@@ -64,23 +149,26 @@ exports.run = async (client, msg, [type, duration]) => {
   question_type = req.results[0].type;
 
   // Checks wether the question is boolean or not
-  if (question_type === "boolean") {
-    question_display = `*Difficulty: ${difficulty}*\n\n**True or false?**\n${entities.decode(question)}`;
+  if (question_type == "boolean") {
+  	possible_answers.push(incorrect_answers[0].toLowerCase());
+  	possible_answers.push(correct_answer.toLowerCase());
+  	console.log(possible_answers);
+  	question_display = `*Difficulty: ${difficulty}*\n\n**True or false?**\n${entities.decode(question)}`;
   } else {
-    for (let i = 0; i < incorrect_answers.length; i++) {
-      possible_answers.push(incorrect_answers[i]);
-    }
-    possible_answers.push(correct_answer);
-    possible_answers = client.funcs.shuffleArray(possible_answers);
-    for (let i = 0; i < possible_answers.length; i++) {
-      displayed_answers += `***${i + 1}.** ${possible_answers[i]}*\n`;
-      possible_answers[i] = possible_answers[i].toLowerCase(); // Lower case so the message collector doesn't have to do it
-    }
-    question_display = `**Difficulty: ${difficulty}**\n\n${entities.decode(question)}\n\n${entities.decode(displayed_answers)}`;
+  	for (var i = 0; i < incorrect_answers.length; i++) {
+  		possible_answers.push(incorrect_answers[i]);
+  	}
+  	possible_answers.push(correct_answer);
+  	possible_answers = client.funcs.shuffleArray(possible_answers);
+  	for(var i = 0; i < possible_answers.length; i++){
+  		displayed_answers += `***${i+1}.** ${possible_answers[i]}*\n`;
+  		possible_answers[i] = possible_answers[i].toLowerCase(); // Lower case so the message collector doesn't have to do it
+  	}
+  	question_display = `**Difficulty: ${difficulty}**\n\n${entities.decode(question)}\n\n${entities.decode(displayed_answers)}`;
   }
 
   /* Result */
-  const embed = await new client.methods.Embed()
+  const embed = new client.methods.Embed()
     .setAuthor("Trivia")
     .setTitle(category)
     .setColor(0xf37917)
@@ -88,46 +176,47 @@ exports.run = async (client, msg, [type, duration]) => {
     .setFooter("Please write the whole answer")
     .setDescription(`\n_${question_display}_\n\n`);
 
-  await reply.edit({ embed });
+  await reply.edit({embed});
 
-  // Create a message collector
-  const participants = [];
-  let winner = "";
-  const collector = msg.channel.createMessageCollector(
-    answer => possible_answers.includes(answer.content.toLowerCase()),
-    { time },
-  );
-  collector.on("collect", (answer) => {
-    if (answer.content.toLowerCase() === correct_answer.toLowerCase() && !participants.includes(answer.author.id)) {
-      gameStatus.delete(msg.channel.id); // Closes the game
-      winner = msg.author;
-      collector.stop(); // Closes the collector
-    } else if (!participants.includes(answer.author.id)) {
-      participants.push(answer.author.id);
-      msg.reply(`**${answer.content}** is not the correct answer. Better luck next time!`);
-    } else {
-      msg.reply("You already tried! Wait for another game to start before participating again!");
-    }
-  });
-  collector.on("end", () => {
-    if (winner.length === 0) { // Nobody found
-      msg.channel.send(`Seems no one got it! The right answer was **${entities.decode(correct_answer)}**`);
-    } else { // We have a winner
-      msg.channel.send(`We have a winner! ${winner} had a right answer with **${entities.decode(correct_answer)}**!`);
-      winner = ""; // Clear the winner
-    }
-    // Clear the participants
-    for (let i = participants.length; i > 0; i--) {
-      participants.pop();
-    }
-   return gameStatus.delete(msg.channel.id); // Closes the game
-  });
+	// Create a message collector
+	var participants = [];
+	var winner = "";
+	const collector = msg.channel.createMessageCollector(
+	  answer => possible_answers.includes(answer.content.toLowerCase()),
+	  { time: time }
+	);
+	collector.on('collect', answer => {
+		if (answer.content.toLowerCase() === correct_answer.toLowerCase() && !participants.includes(answer.author.id)) {
+			gameStatus.delete(msg.channel.id); // Closes the game
+			winner = msg.author;
+			collector.stop(); // Closes the collector 
+		} else if (!participants.includes(answer.author.id)) {
+			participants.push(answer.author.id);
+			msg.reply(`**${answer.content}** is not the correct answer. Better luck next time!`);
+		} else {
+			msg.reply(`You already tried! Wait for another game to start before participating again!`);
+		}
+	});
+	collector.on('end', collected => {
+		if (winner.length == 0) { // Nobody found
+			msg.channel.send(`Seems no one got it! The right answer was **${entities.decode(correct_answer)}**`);
+		} else { // We have a winner
+			msg.channel.send(`We have a winner! ${winner} had a right answer with **${entities.decode(correct_answer)}**!`);
+			winner = ""; // Clear the winner
+		}
+		// Clear the participants
+		for (var i = participants.length; i > 0; i--) { 
+			participants.pop();
+		}
+		gameStatus.delete(msg.channel.id); // Closes the game
+		return;
+	});
 };
 
 exports.conf = {
   enabled: true,
   runIn: ["text"],
-  aliases: ["quizz"],
+  aliases: ["quiz"],
   permLevel: 0,
   botPerms: [],
   requiredFuncs: ["shuffleArray"],
@@ -136,6 +225,6 @@ exports.conf = {
 exports.help = {
   name: "trivia",
   description: "Brings up a random trivia about movies or TV shows.",
-  usage: "[film|tv] [duration:int]",
+  usage: "[general|books|film|music|theatres|tv|videogames|boardgames|nature|computers|maths|mythology|sports|geography|history|politics|art|celebrities|animals|vehicles|comics|gadgets|manga|cartoon] [boolean|multiple] [duration:int]",
   usageDelim: " ",
 };
