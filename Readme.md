@@ -2,6 +2,8 @@
 [![Discord](https://discordapp.com/api/guilds/321189332645838849/embed.png)](https://discord.gg/tc7Prth)
 # Apex Bot
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Soumil07/Apex-Bot.svg)](https://greenkeeper.io/)
+
 ## What is it? 
 
 Apex Bot is an easy to use Discord bot which does what multiple bots do in a single bot. 
