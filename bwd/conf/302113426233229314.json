@@ -1,0 +1,26 @@
+{
+  "prefix": {
+    "data": "-",
+    "type": "String",
+    "possibles": []
+  },
+  "disabledCommands": {
+    "data": [],
+    "type": "Array"
+  },
+  "modRole": {
+    "data": "Cat-astrophe",
+    "type": "String",
+    "possibles": []
+  },
+  "adminRole": {
+    "data": "Party Admin",
+    "type": "String",
+    "possibles": []
+  },
+  "lang": {
+    "data": "en",
+    "type": "String",
+    "possibles": []
+  }
+}
