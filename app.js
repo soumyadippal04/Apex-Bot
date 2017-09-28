@@ -1,5 +1,5 @@
-const { Client, PermLevels } = require("komada");
-const config = require("./config.json");
+const { Client, PermLevels } = require("klasa");
+const { token } = require("./config.json");
 const Enmap = require("enmap");
 
 const permStructure = new PermLevels()
@@ -29,14 +29,14 @@ class Apex extends Client {
 }
 
 const client = new Apex({
-  ownerID: "257847417183928320",
-  prefix: "-",
-  permStructure,
-  cmdEditing: true,
-  cmdLogging: true,
-  clientOptions: {
-    fetchAllMembers: false,
-  },
+    clientOptions: {
+        fetchAllMembers: false
+    },
+    prefix: '-',
+    cmdEditing: true,
+    cmdLogging: true,
+    typing: true,
+    readyMessage: (client) => `${client.user.tag}, Ready to serve ${client.guilds.size} guilds and ${client.users.size} users`
 });
 
 client.login(config.token);
